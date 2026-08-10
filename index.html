@@ -996,12 +996,13 @@ img{
 
   .nav{display:none}
   .menu-btn{display:block}
-
-  /* iPhone/iOS: header remains part of the page geometry instead of
-     sitting over the first viewport and creating a visual "drop". */
   .site-header{
-    position:sticky;
+    position:fixed;
     top:0;
+    left:0;
+    right:0;
+    width:100%;
+    z-index:1000;
   }
 
   html{
@@ -1017,11 +1018,11 @@ img{
 
   .hero{
     min-height:calc(100svh - var(--header));
-    padding-top:0;
+    padding-top:var(--header);
   }
 
   .hero-media{
-    inset:0;
+    inset:var(--header) 0 0;
   }
 
   .hero-media img{
