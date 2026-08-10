@@ -358,6 +358,57 @@ img{
   line-height:1.55;
 }
 
+.ui-arrow{
+  position:relative;
+  display:inline-block;
+  width:15px;
+  height:15px;
+  margin-left:9px;
+  flex:0 0 15px;
+  vertical-align:-2px;
+}
+.ui-arrow::before{
+  content:"";
+  position:absolute;
+  width:9px;
+  height:9px;
+  right:1px;
+  bottom:1px;
+  border-right:2px solid currentColor;
+  border-bottom:2px solid currentColor;
+}
+.ui-arrow::after{
+  content:"";
+  position:absolute;
+  width:12px;
+  height:2px;
+  right:1px;
+  bottom:3px;
+  background:currentColor;
+  transform:rotate(-45deg);
+  transform-origin:right center;
+}
+.ui-arrow-up::before{
+  transform:rotate(-90deg);
+  transform-origin:center;
+  right:0;
+  bottom:3px;
+}
+.ui-arrow-up::after{
+  transform:rotate(-45deg);
+  right:1px;
+  bottom:6px;
+}
+.top-chevron{
+  display:block;
+  width:10px;
+  height:10px;
+  margin:4px auto 0;
+  border-left:2px solid currentColor;
+  border-top:2px solid currentColor;
+  transform:rotate(45deg);
+}
+
 .cta{
   display:inline-flex;
   align-items:center;
@@ -946,13 +997,31 @@ img{
   .nav{display:none}
   .menu-btn{display:block}
 
+  /* iPhone/iOS: header remains part of the page geometry instead of
+     sitting over the first viewport and creating a visual "drop". */
+  .site-header{
+    position:sticky;
+    top:0;
+  }
+
+  html{
+    scroll-padding-top:var(--header);
+    overflow-x:hidden;
+  }
+
+  body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+  }
+
   .hero{
-    min-height:calc(100svh);
-    padding-top:var(--header);
+    min-height:calc(100svh - var(--header));
+    padding-top:0;
   }
 
   .hero-media{
-    inset:var(--header) 0 0;
+    inset:0;
   }
 
   .hero-media img{
@@ -960,7 +1029,8 @@ img{
   }
 
   .hero-content{
-    padding-top:72px;
+    min-height:calc(100svh - var(--header));
+    padding-top:clamp(46px,9svh,82px);
     padding-bottom:28px;
   }
 
@@ -1016,6 +1086,7 @@ img{
     min-height:0;
     height:auto;
     aspect-ratio:4 / 5;
+    flex:0 0 auto;
   }
 
   .event-info{
@@ -1101,6 +1172,41 @@ img{
   }
 }
 
+  /* iOS-safe icon rendering */
+  .mobile-menu a::after{
+    content:"";
+    width:9px;
+    height:9px;
+    border-top:2px solid var(--muted);
+    border-right:2px solid var(--muted);
+    transform:rotate(45deg);
+    flex:0 0 9px;
+  }
+
+  .ticker{
+    width:100%;
+    max-width:100%;
+    overflow:hidden;
+  }
+
+  .ticker-item::after{
+    content:"";
+    width:9px;
+    height:9px;
+    flex:0 0 9px;
+    display:block;
+    background:currentColor;
+    border-radius:50%;
+  }
+
+  .news-arrow{
+    font-size:0;
+  }
+
+  .top-button{
+    font-size:0;
+  }
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,
@@ -1170,7 +1276,7 @@ img{
           a space where people, clothing, image, performance and music collide.
         </p>
 
-        <a class="cta" href="#events">Explore the archive ↘</a>
+        <a class="cta" href="#events">Explore the archive <span class="ui-arrow" aria-hidden="true"></span></a>
       </div>
     </div>
   </section>
@@ -1214,7 +1320,7 @@ img{
           </div>
           <div>
             <div class="news-date">01 May 2026 / Barcelona</div>
-            <div class="news-arrow">↘</div>
+            <div class="news-arrow" aria-hidden="true"><span class="ui-arrow"></span></div>
           </div>
         </article>
 
@@ -1298,7 +1404,7 @@ img{
               </div>
 
               <div class="event-actions">
-                <a class="cta cta-dark" href="#gallery">View visual archive ↘</a>
+                <a class="cta cta-dark" href="#gallery">View visual archive <span class="ui-arrow" aria-hidden="true"></span></a>
               </div>
             </div>
           </div>
@@ -1378,7 +1484,7 @@ img{
             The format can change. The attitude stays.
           </p>
           <div style="margin-top:28px">
-            <a class="cta" href="mailto:info@riotraw.com">Start a conversation ↗</a>
+            <a class="cta" href="mailto:info@riotraw.com">Start a conversation <span class="ui-arrow ui-arrow-up" aria-hidden="true"></span></a>
           </div>
         </div>
 
@@ -1510,7 +1616,7 @@ img{
           <div class="contact-box" id="contact">
             <div class="contact-label">Contact / Bookings</div>
             <a class="contact-link" href="mailto:info@riotraw.com">info@riotraw.com</a>
-            <a class="contact-link" href="https://www.instagram.com/riotrawweek/" target="_blank" rel="noopener noreferrer">@riotrawweek ↗</a>
+            <a class="contact-link" href="https://www.instagram.com/riotrawweek/" target="_blank" rel="noopener noreferrer">@riotrawweek <span class="ui-arrow ui-arrow-up" aria-hidden="true"></span></a>
           </div>
         </div>
       </div>
@@ -1531,7 +1637,7 @@ img{
   <img id="lightboxImage" src="" alt="">
 </div>
 
-<button class="top-button" id="topButton" type="button" aria-label="Back to top">↑</button>
+<button class="top-button" id="topButton" type="button" aria-label="Back to top"><span class="top-chevron" aria-hidden="true"></span></button>
 
 <script>
 (function(){
