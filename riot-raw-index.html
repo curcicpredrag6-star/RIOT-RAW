@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050505">
+<meta name="description" content="RIOT RAW — live fashion, art + sound.">
+<title>RIOT RAW — Live Fashion + Art + Sound</title>
+<style>
+:root{
+  --bg:#050505;
+  --panel:#0b0b0b;
+  --white:#f5f5f0;
+  --muted:#8b8b88;
+  --acid:#eaff00;
+  --line:rgba(245,245,240,.16);
+  --max:1400px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--white);font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
+body.menu-open{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+img{display:block;max-width:100%}
+.header{
+ position:fixed;z-index:1000;top:0;left:0;right:0;height:86px;
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 28px;border-bottom:1px solid transparent;
+ background:linear-gradient(to bottom,rgba(5,5,5,.96),rgba(5,5,5,.72),transparent);
+ transition:.25s;
+}
+.header.scrolled{height:72px;background:rgba(5,5,5,.96);border-color:var(--line)}
+.logo{font-size:28px;font-weight:950;letter-spacing:-2px;line-height:.8}
+.logo small{display:block;margin-top:13px;font-size:9px;letter-spacing:5px;font-weight:700;color:#aaa;white-space:nowrap}
+.menu-btn{width:58px;height:58px;border:1px solid var(--line);background:#090909;color:var(--white);display:grid;place-items:center;cursor:pointer}
+.menu-lines,.menu-lines:before,.menu-lines:after{content:"";display:block;width:26px;height:2px;background:var(--white);transition:.25s}
+.menu-lines:before{transform:translateY(-8px)}
+.menu-lines:after{transform:translateY(6px)}
+.menu-btn.active .menu-lines{background:transparent}
+.menu-btn.active .menu-lines:before{transform:rotate(45deg)}
+.menu-btn.active .menu-lines:after{transform:rotate(-45deg)}
+.overlay{
+ position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.96);
+ opacity:0;visibility:hidden;pointer-events:none;transition:.25s;
+}
+.overlay.open{opacity:1;visibility:visible;pointer-events:auto}
+.menu-panel{
+ position:absolute;inset:86px 0 0;display:grid;grid-template-columns:1.15fr .85fr;
+ padding:clamp(30px,6vw,90px);gap:40px;overflow:auto;
+}
+.menu-nav{display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+.menu-nav a{font-size:clamp(42px,7vw,96px);font-weight:950;letter-spacing:-5px;line-height:.9;padding:8px 0}
+.menu-nav a:hover{color:var(--acid)}
+.menu-side{align-self:end;border-left:1px solid var(--line);padding-left:30px}
+.menu-side p{color:var(--muted);max-width:360px;line-height:1.6}
+.social{display:flex;gap:16px;margin-top:30px}
+.social a{border-bottom:1px solid var(--white);padding-bottom:5px}
+main{padding-top:86px}
+.hero{min-height:92vh;position:relative;display:flex;align-items:flex-end;padding:28px}
+.hero-media{position:absolute;inset:0;overflow:hidden}
+.hero-media:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.1) 45%,rgba(0,0,0,.9))}
+.hero-media img{width:100%;height:100%;object-fit:cover;object-position:center 42%;filter:saturate(.82) contrast(1.08)}
+.hero-copy{position:relative;z-index:2;width:100%;max-width:var(--max);margin:auto}
+.kicker{font-size:11px;letter-spacing:6px;color:#ccc;text-transform:uppercase}
+.hero h1{font-size:clamp(76px,15vw,230px);line-height:.76;letter-spacing:-9px;margin:20px 0 30px;font-weight:950}
+.hero h1 span{display:block}
+.hero-bottom{display:flex;justify-content:space-between;align-items:end;gap:20px}
+.hero-intro{max-width:520px;font-size:18px;line-height:1.5}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:18px;padding:18px 24px;background:var(--acid);color:#050505;font-weight:950;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--acid);cursor:pointer}
+.btn:hover{transform:translateY(-2px)}
+.btn.dark{background:transparent;color:var(--white);border-color:var(--white)}
+section{max-width:var(--max);margin:auto;padding:110px 28px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:30px;border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:45px}
+.section-head h2{margin:0;font-size:clamp(46px,8vw,110px);line-height:.8;letter-spacing:-5px}
+.section-head p{margin:0;color:var(--muted);max-width:340px;line-height:1.5}
+.event-feature{display:grid;grid-template-columns:1.1fr .9fr;gap:0;background:var(--panel);border:1px solid var(--line)}
+.event-feature-media{min-height:650px;position:relative}
+.event-feature-media img{width:100%;height:100%;object-fit:cover}
+.event-feature-copy{padding:clamp(28px,5vw,70px);display:flex;flex-direction:column;justify-content:space-between}
+.event-number{font-size:14px;letter-spacing:4px;color:var(--acid)}
+.event-feature h3{font-size:clamp(50px,7vw,100px);line-height:.8;letter-spacing:-5px;margin:25px 0}
+.meta{font-size:12px;letter-spacing:3px;color:#aaa;text-transform:uppercase}
+.event-feature-copy p{font-size:18px;line-height:1.65;color:#ccc;max-width:480px}
+.event-actions{display:flex;gap:10px;flex-wrap:wrap}
+.events-list{border-top:1px solid var(--line)}
+.event-row{display:grid;grid-template-columns:100px 1fr auto;align-items:center;gap:25px;padding:30px 0;border-bottom:1px solid var(--line);transition:.2s}
+.event-row:hover{padding-left:15px;background:#080808}
+.event-row .num{font-size:12px;letter-spacing:3px;color:var(--acid)}
+.event-row h3{font-size:clamp(30px,5vw,65px);letter-spacing:-3px;margin:0}
+.event-row .date{font-size:12px;letter-spacing:2px;color:var(--muted)}
+.story{display:grid;grid-template-columns:.8fr 1.2fr;gap:70px;align-items:start}
+.story h2{font-size:clamp(45px,7vw,90px);line-height:.85;letter-spacing:-5px;margin:0}
+.story p{font-size:20px;line-height:1.7;color:#c7c7c2;margin-top:0}
+.story .big-quote{font-size:clamp(30px,4vw,55px);line-height:1;letter-spacing:-2px;color:var(--white);margin:55px 0}
+.gallery-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.gallery-item{position:relative;overflow:hidden;background:#111;min-height:250px}
+.gallery-item:nth-child(1){grid-column:span 7;min-height:620px}
+.gallery-item:nth-child(2){grid-column:span 5;min-height:620px}
+.gallery-item:nth-child(3){grid-column:span 4}
+.gallery-item:nth-child(4){grid-column:span 4}
+.gallery-item:nth-child(5){grid-column:span 4}
+.gallery-item:nth-child(6){grid-column:span 7;min-height:500px}
+.gallery-item:nth-child(7){grid-column:span 5;min-height:500px}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.gallery-item:hover img{transform:scale(1.04)}
+.gallery-label{position:absolute;left:14px;bottom:14px;background:#050505;color:var(--white);padding:8px 10px;font-size:10px;letter-spacing:2px}
+.manifesto{background:var(--acid);color:#050505;max-width:none;padding:100px max(28px,calc((100vw - var(--max))/2 + 28px))}
+.manifesto h2{font-size:clamp(48px,9vw,140px);line-height:.82;letter-spacing:-7px;max-width:1100px;margin:0}
+.manifesto p{font-size:20px;max-width:620px;line-height:1.5;margin:45px 0 0}
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:60px}
+.contact h2{font-size:clamp(55px,8vw,110px);line-height:.8;letter-spacing:-6px;margin:0}
+.contact-links{display:flex;flex-direction:column}
+.contact-links a{font-size:clamp(25px,4vw,48px);font-weight:800;border-bottom:1px solid var(--line);padding:18px 0}
+footer{border-top:1px solid var(--line);padding:30px 28px;display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+@media(max-width:800px){
+ .header{height:76px;padding:0 16px}.header.scrolled{height:68px}
+ .logo{font-size:24px}.logo small{font-size:7px;letter-spacing:3px;margin-top:10px}
+ .menu-btn{width:54px;height:54px}
+ .menu-panel{inset:76px 0 0;grid-template-columns:1fr;padding:35px 22px;gap:25px}
+ .menu-nav{justify-content:flex-start;padding-top:20px}
+ .menu-nav a{font-size:48px;letter-spacing:-3px;padding:6px 0}
+ .menu-side{border-left:0;border-top:1px solid var(--line);padding:25px 0 50px}
+ main{padding-top:76px}
+ .hero{min-height:78vh;padding:18px}
+ .hero-media img{object-position:center 35%}
+ .hero h1{font-size:19vw;letter-spacing:-5px;margin:15px 0 20px}
+ .hero-bottom{display:block}.hero-intro{font-size:15px;margin-bottom:20px}
+ section{padding:75px 18px}
+ .section-head{display:block;margin-bottom:30px}.section-head h2{font-size:54px;letter-spacing:-3px;margin-bottom:20px}
+ .event-feature{display:flex;flex-direction:column}
+ .event-feature-media{min-height:480px;height:65vw;max-height:620px}
+ .event-feature-copy{padding:28px 22px;gap:35px}
+ .event-feature h3{font-size:57px;letter-spacing:-4px}
+ .event-row{grid-template-columns:55px 1fr;gap:10px;padding:24px 0}
+ .event-row .date{grid-column:2}.event-row .arrow{display:none}
+ .story{grid-template-columns:1fr;gap:35px}.story p{font-size:17px}
+ .gallery-grid{grid-template-columns:1fr 1fr;gap:8px}
+ .gallery-item,.gallery-item:nth-child(n){grid-column:auto;min-height:0;aspect-ratio:3/4}
+ .gallery-item:nth-child(1){grid-column:span 2;aspect-ratio:4/5}
+ .gallery-item:nth-child(6){grid-column:span 2;aspect-ratio:4/5}
+ .manifesto{padding:75px 18px}.manifesto h2{font-size:58px;letter-spacing:-4px}
+ .contact{grid-template-columns:1fr;gap:40px}.contact h2{font-size:70px}
+ footer{display:block;padding:25px 18px}.footer-right{margin-top:12px}
+}
+</style>
+</head>
+<body>
+<header class="header" id="header">
+  <a class="logo" href="#top">RIOT RAW<small>LIVE FASHION + ART + SOUND</small></a>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span class="menu-lines"></span></button>
+</header>
+
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="menu-panel">
+    <nav class="menu-nav" aria-label="Main navigation">
+      <a href="#top">HOME</a>
+      <a href="#events">EVENTS</a>
+      <a href="#gallery">GALLERY</a>
+      <a href="#about">ABOUT</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
+    <div class="menu-side">
+      <div class="kicker">RIOT RAW / BARCELONA</div>
+      <p>Independent live fashion, art + sound. A growing archive of nights, people, collaborations and ideas.</p>
+      <div class="social">
+        <a href="https://www.instagram.com/riotrawweek/" target="_blank" rel="noopener">INSTAGRAM ↗</a>
+        <a href="mailto:info@riotraw.com">EMAIL ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-media">
+      <img src="IMG_9549.jpeg" alt="RIOT RAW visual">
+    </div>
+    <div class="hero-copy">
+      <div class="kicker">BARCELONA / INDEPENDENT PROJECT</div>
+      <h1><span>RIOT</span><span>RAW.</span></h1>
+      <div class="hero-bottom">
+        <p class="hero-intro">Live fashion, art and sound. A space for people, ideas, collaborations and nights that don't fit neatly into one category.</p>
+        <a class="btn" href="#events">EXPLORE EVENTS ↘</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="events">
+    <div class="section-head">
+      <h2>EVENTS</h2>
+      <p>Two events. One growing archive. Start with the latest RIOT RAW night, then go back to where it began.</p>
+    </div>
+
+    <article class="event-feature">
+      <div class="event-feature-media">
+        <img src="IMG_9546.jpeg" alt="Vinos & Pastrami event visual">
+      </div>
+      <div class="event-feature-copy">
+        <div>
+          <div class="event-number">02 / LATEST EVENT</div>
+          <h3>VINOS<br>&amp; PASTRAMI</h3>
+          <div class="meta">BARCELONA / 01 MAY 2026 / RIOT RAW × UAU</div>
+          <p>Vino real. Gente real. Música que pega. A RIOT RAW collaboration built around food, wine, sound and the people in the room.</p>
+        </div>
+        <div class="event-actions">
+          <a class="btn" href="#gallery">VIEW VISUALS ↗</a>
+          <a class="btn dark" href="https://www.instagram.com/riotrawweek/" target="_blank" rel="noopener">INSTAGRAM ↗</a>
+        </div>
+      </div>
+    </article>
+
+    <div style="height:75px"></div>
+
+    <div class="events-list">
+      <a class="event-row" href="#event01">
+        <span class="num">01</span>
+        <span><h3>FIRST RIOT RAW EVENT</h3><span class="date">BARCELONA / ARCHIVE</span></span>
+        <span class="arrow">↗</span>
+      </a>
+      <a class="event-row" href="#event02">
+        <span class="num">02</span>
+        <span><h3>VINOS &amp; PASTRAMI</h3><span class="date">01 MAY 2026 / BARCELONA</span></span>
+        <span class="arrow">↗</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="event02">
+    <div class="section-head">
+      <h2>02 / STORY</h2>
+      <p>VINOS &amp; PASTRAMI — the second RIOT RAW event.</p>
+    </div>
+    <div class="story">
+      <div>
+        <h2>THE NIGHT<br>IN FRAGMENTS.</h2>
+      </div>
+      <div>
+        <p>RIOT RAW is built around the collision of fashion, art, sound, food and people. The second event brought that idea into one room with UAU, wine, pastrami, a DJ set and a crowd that came for the atmosphere.</p>
+        <p class="big-quote">NO POSES.<br>NO FILTERS.<br>JUST THE GOOD.</p>
+        <a class="btn" href="#gallery">ENTER THE GALLERY ↘</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="event01">
+    <div class="section-head">
+      <h2>01 / ARCHIVE</h2>
+      <p>The first RIOT RAW chapter. This section is intentionally kept as an archive entry until more details are added.</p>
+    </div>
+    <div class="story">
+      <div><h2>WHERE<br>IT STARTED.</h2></div>
+      <div>
+        <p>Every RIOT RAW event becomes part of the archive. As the project grows, this space can hold the first event's exact title, date, collaborators, ticket information and full visual story.</p>
+        <a class="btn dark" href="https://www.instagram.com/riotrawweek/" target="_blank" rel="noopener">SEE RIOT RAW ON INSTAGRAM ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="section-head">
+      <h2>GALLERY</h2>
+      <p>Faces, clothes, objects, movement, details and the strange little moments that make the night.</p>
+    </div>
+    <div class="gallery-grid">
+      <figure class="gallery-item"><img src="IMG_9549.jpeg" alt="RIOT RAW visual 01"><span class="gallery-label">01 / COVER</span></figure>
+      <figure class="gallery-item"><img src="IMG_9546.jpeg" alt="RIOT RAW visual 02"><span class="gallery-label">02 / EVENT</span></figure>
+      <figure class="gallery-item"><img src="IMG_9547.jpeg" alt="RIOT RAW visual 03"><span class="gallery-label">03 / PEOPLE</span></figure>
+      <figure class="gallery-item"><img src="IMG_9548.jpeg" alt="RIOT RAW visual 04"><span class="gallery-label">04 / FASHION</span></figure>
+      <figure class="gallery-item"><img src="IMG_9550.jpeg" alt="RIOT RAW visual 05"><span class="gallery-label">05 / NIGHT</span></figure>
+      <figure class="gallery-item"><img src="IMG_9551.jpeg" alt="RIOT RAW visual 06"><span class="gallery-label">06 / DETAILS</span></figure>
+      <figure class="gallery-item"><img src="IMG_9552.jpeg" alt="RIOT RAW visual 07"><span class="gallery-label">07 / AFTER</span></figure>
+    </div>
+  </section>
+
+  <section class="manifesto" id="about">
+    <h2>FASHION.<br>ART.<br>SOUND.<br>PEOPLE.</h2>
+    <p>RIOT RAW is an independent project born in Barcelona. We create spaces where fashion, performance, installation, music, food and people can collide without asking permission.</p>
+  </section>
+
+  <section id="contact">
+    <div class="contact">
+      <div><h2>LET'S<br>MAKE<br>NOISE.</h2></div>
+      <div class="contact-links">
+        <a href="https://www.instagram.com/riotrawweek/" target="_blank" rel="noopener">@RIOTRAWEEK ↗</a>
+        <a href="mailto:info@riotraw.com">INFO@RIOTRAW.COM ↗</a>
+        <a href="#top">BACK TO TOP ↑</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 RIOT RAW</span>
+  <span class="footer-right">LIVE FASHION + ART + SOUND / BARCELONA</span>
+</footer>
+
+<script>
+const menuBtn=document.getElementById('menuBtn');
+const overlay=document.getElementById('overlay');
+const header=document.getElementById('header');
+const closeMenu=()=>{
+  menuBtn.classList.remove('active');
+  menuBtn.setAttribute('aria-expanded','false');
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden','true');
+  document.body.classList.remove('menu-open');
+};
+const openMenu=()=>{
+  menuBtn.classList.add('active');
+  menuBtn.setAttribute('aria-expanded','true');
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden','false');
+  document.body.classList.add('menu-open');
+};
+menuBtn.addEventListener('click',()=>overlay.classList.contains('open')?closeMenu():openMenu());
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeMenu()});
+document.querySelectorAll('.menu-nav a').forEach(a=>a.addEventListener('click',closeMenu));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+window.addEventListener('scroll',()=>header.classList.toggle('scrolled',window.scrollY>30),{passive:true});
+</script>
+</body>
+</html>
