@@ -1,0 +1,1 @@
+Upload your images into this folder using the slot names in README-IMAGES.txt.
